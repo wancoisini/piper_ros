@@ -1,0 +1,71 @@
+cube_detector:
+  ros__parameters:
+    use_sim_time: true
+    # 目标颜色，可选 red / green / blue；launch 参数可覆盖此值
+    target_color: red
+    # 相机话题（由 gazebo_bridge.yaml 桥接而来）
+    rgb_topic: /camera/image_raw/image
+    depth_topic: /camera/image_raw/depth_image
+    camera_info_topic: /camera/image_raw/camera_info
+    # 光学坐标系；若 TF 中不存在会退回到 fallback_optical_frame
+    optical_frame: camera_link_optical
+    fallback_optical_frame: camera_link
+    # 目标位姿输出坐标系（机器人规划基座）
+    target_frame: arm_base
+    # 红色跨 HSV 的 0°，因此保留两段可调阈值；绿/蓝使用程序内置 H 范围
+    h_low1: 0
+    h_high1: 10
+    h_low2: 160
+    h_high2: 179
+    s_min: 100
+    v_min: 60
+    min_area_px: 200        # 最小连通域面积
+    publish_debug_image: true
+    target_pose_topic: /target_cube/pose
+    debug_image_topic: /target_cube/debug_image
+
+pick_cube:
+  ros__parameters:
+    use_sim_time: true
+    target_pose_topic: /target_cube/pose
+    base_link: arm_base
+    end_effector: link6
+    # 抓取几何（米），相对目标点
+    pregrasp_height: 0.02    # 预抓取位：指尖在方块上方的高度（垂直朝下时>0.07不可达）
+    grasp_z_offset: 0.0      # 抓取时指尖相对方块中心的 z 偏移（0=正对中心）
+    lift_height: 0.05        # 抓取后抬升高度（垂直朝下姿态可达域有限）
+    gripper_open: 0.05
+    gripper_close: 0.01     # 0.04m 方块：合到约夹住两侧，非完全闭合(0=空夹)
+    planning_time: 5.0
+    # link6 末端到夹爪指尖沿 link6 +z 的偏移（米）。规划让"指尖"到达目标，
+    # 需沿抓取姿态 z 轴回退该距离求 link6 目标位置。由 URDF joint7 origin 得。
+    tip_offset: 0.125
+    # 抓取姿态（四元数 xyzw）：绕 base y 轴 180°，link6 +z 轴垂直朝下 (0,0,-1)，
+    # 夹爪指尖竖直下压对准方块。方块移到近处 base 系(0.30,0.0)后，该姿态下
+    # 预抓取位(上方≤0.05)与抓取位均可达（compute_ik 全域扫描验证）。
+    grasp_qx: 0.0
+    grasp_qy: 1.0
+    grasp_qz: 0.0
+    grasp_qw: 0.0
+    # ===== 观察位（关节角 joint1~6，弧度）：让相机俯视工作区看到方块 =====
+    # 更换相机安装位或场景布局后应重新校准。
+    observe_joints: [0.0, 0.419, -0.733, 0.0, 1.152, 0.0]
+    # ===== home 姿态（关节角 joint1~6，弧度）：抓取放置后回归 =====
+    home_joints: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    # ===== 放置位（指尖笛卡尔坐标 x,y,z，base_link 系，米）=====
+    # 抓取后把方块移到此处上方 -> 下降 -> 松爪；可按实验任务修改。
+    # 通用默认值：旧参数文件未配置分颜色坐标时，三个颜色都回退到此位置。
+    place_x: 0.30
+    place_y: 0.15
+    place_z: 0.05
+    # 三种颜色分别放置，坐标均为 base_link 系下的指尖目标位置。
+    red_place_x: 0.30
+    red_place_y: 0.15
+    red_place_z: 0.05
+    green_place_x: 0.25
+    green_place_y: 0.15
+    green_place_z: 0.05
+    blue_place_x: 0.30
+    blue_place_y: 0.10
+    blue_place_z: 0.05
+    place_pregrasp_height: 0.05   # 放置前在放置点上方的高度

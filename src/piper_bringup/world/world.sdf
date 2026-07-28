@@ -1,0 +1,294 @@
+<sdf version='1.9'>
+  <world name='empty'>
+    <physics name='1ms' type='ignored'>
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1</real_time_factor>
+      <real_time_update_rate>1000</real_time_update_rate>
+    </physics>
+    <plugin name='gz::sim::systems::Physics' filename='ignition-gazebo-physics-system'/>
+    <plugin name='gz::sim::systems::UserCommands' filename='ignition-gazebo-user-commands-system'/>
+    <plugin name='gz::sim::systems::SceneBroadcaster' filename='ignition-gazebo-scene-broadcaster-system'/>
+    <plugin name='gz::sim::systems::Contact' filename='ignition-gazebo-contact-system'/>
+
+    <plugin name='gz::sim::systems::Sensors' filename='gz-sim-sensors-system'>
+      <render_engine>ogre2</render_engine>
+    </plugin>
+
+    <gravity>0 0 -9.8</gravity>
+    <magnetic_field>6e-06 2.3e-05 -4.2e-05</magnetic_field>
+    <atmosphere type='adiabatic'/>
+    <scene>
+      <ambient>0.4 0.4 0.4 1</ambient>
+      <background>0.7 0.7 0.7 1</background>
+      <shadows>true</shadows>
+    </scene>
+    <model name='ground_plane'>
+      <static>true</static>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>100 100</size>
+            </plane>
+          </geometry>
+          <surface>
+            <friction>
+              <ode/>
+            </friction>
+            <bounce/>
+            <contact/>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>100 100</size>
+            </plane>
+          </geometry>
+          <material>
+            <ambient>0.8 0.8 0.8 1</ambient>
+            <diffuse>0.8 0.8 0.8 1</diffuse>
+            <specular>0.8 0.8 0.8 1</specular>
+          </material>
+        </visual>
+        <pose>0 0 0 0 -0 0</pose>
+        <inertial>
+          <pose>0 0 0 0 -0 0</pose>
+          <mass>1</mass>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+        </inertial>
+        <enable_wind>false</enable_wind>
+      </link>
+      <pose>0 0 0 0 -0 0</pose>
+      <self_collide>false</self_collide>
+    </model>
+    <model name="red_cube">                                                                                                                           
+                                                                                                                                                        
+        <!--                                                                                                                                            
+          false：方块参与动力学仿真，可以受重力和碰撞作用                                                                                               
+          true：方块固定不动，质量和惯性参数不会实际参与动力学计算                                                                                      
+        -->                                                                                                                                             
+        <static>false</static>                                                                                                                          
+                                                                                                                                                        
+        <!--                                                                                                                                            
+          方块尺寸为0.04 × 0.04 × 0.04米（夹爪可夹持范围内）。
+          方块半高为0.02米。桌面顶约在 z=0.76，故 z=0.78 时底面贴桌面。
+          位置选在机器人前方近处：世界(0.17,0.05)对应 arm_base 系约(0.30,0.0)，
+          该处机械臂可纯垂直朝下抓取（预抓取位与抓取位均在可达域内）。
+        -->
+        <pose>0.17 0.05 0.78 0 0 0</pose>                                                                                                                     
+                                                                                                                                                        
+        <link name="cube_link">                                                                                                                         
+                                                                                                                                                        
+          <!-- 是否受到重力作用 -->                                                                                                                     
+          <gravity>true</gravity>                                                                                                                     
+                                                                                                                                                        
+          <!-- 质量和惯性属性 -->                                                                                                                       
+          <inertial>                                                                                                                                    
+                                                                                                                                                        
+            <!-- 质量，单位为kg（轻量，便于小夹爪抓取） -->
+            <mass>0.05</mass>                                                                                                                            
+                                                                                                                                                        
+            <!--                                                                                                                                        
+              惯性参考坐标系相对于link坐标系的位姿。                                                                                                    
+              该方块质心与link坐标系原点重合。                                                                                                          
+            -->                                                                                                                                         
+            <pose>0 0 0 0 0 0</pose>                                                                                                                    
+                                                                                                                                                        
+            <!--                                                                                                                                        
+              均匀实心立方体绕质心的惯性张量，                                                                                                          
+              单位为kg·m²。                                                                                                                             
+            -->                                                                                                                                         
+            <!-- 实心立方 I=m*a^2/6=0.05*0.04^2/6≈1.33e-5 -->
+            <inertia>
+              <ixx>0.0000133</ixx>
+              <iyy>0.0000133</iyy>
+              <izz>0.0000133</izz>                                                                                                                     
+                                                                                                                                                        
+              <!-- 对称立方体且坐标轴与几何主轴重合，惯性积为0 -->                                                                                      
+              <ixy>0.0</ixy>                                                                                                                            
+              <ixz>0.0</ixz>                                                                                                                            
+              <iyz>0.0</iyz>                                                                                                                            
+            </inertia>                                                                                                                                  
+                                                                                                                                                        
+          </inertial>                                                                                                                                   
+                                                                                                                                                        
+          <!-- 碰撞模型 -->                                                                                                                             
+          <collision name="cube_collision">                                                                                                           
+            <geometry>                                                                                                                                  
+              <box>                                                                                                                                     
+                <!-- 长、宽、高，单位为米 -->
+                <size>0.04 0.04 0.04</size>
+              </box>
+            </geometry>
+
+            <!-- 接触表面参数，可选 -->                                                                                                                 
+            <surface>                                                                                                                                   
+              <friction>                                                                                                                                
+                <ode>                                                                                                                                   
+                  <!-- 两个正交方向上的摩擦系数 -->                                                                                                     
+                  <mu>0.8</mu>                                                                                                                          
+                  <mu2>0.8</mu2>                                                                                                                        
+                </ode>                                                                                                                                  
+              </friction>                                                                                                                               
+                                                                                                                                                        
+              <contact>                                                                                                                                 
+                <ode>                                                                                                                                   
+                  <!-- 接触刚度和阻尼 -->                                                                                                               
+                  <kp>1000000.0</kp>                                                                                                                    
+                  <kd>1.0</kd>                                                                                                                          
+                </ode>                                                                                                                                  
+              </contact>                                                                                                                                
+            </surface>                                                                                                                                  
+          </collision>                                                                                                                                  
+                                                                                                                                                        
+          <!-- 可视化模型 -->                                                                                                                           
+          <visual name="cube_visual">
+            <geometry>
+              <box>
+                <size>0.04 0.04 0.04</size>
+              </box>
+            </geometry>                                                                                                                             
+                                                                                                                                                        
+            <!-- 红色材质 -->                                                                                                                           
+            <material>                                                                                                                                  
+              <!-- RGBA：红、绿、蓝、透明度 -->                                                                                                         
+              <ambient>1 0 0 1</ambient>                                                                                                                
+              <diffuse>1 0 0 1</diffuse>                                                                                                                
+              <specular>0.2 0.2 0.2 1</specular>                                                                                                        
+                                                                                                                                                        
+              <!-- Gazebo Classic材质 -->                                                                                                               
+              <script>                                                                                                                                  
+                <uri>file://media/materials/scripts/gazebo.material</uri>                                                                               
+                <name>Gazebo/Red</name>                                                                                                                 
+              </script>                                                                                                                                 
+            </material>                                                                                                                                 
+          </visual>                                                                                                                                     
+                                                                                                                                                        
+      </link>
+    </model>
+
+    <!-- 绿色方块：与 red_cube 同尺寸/质量，仅位置与颜色不同。
+         沿 +y 偏移 0.10m，仍在桌面(z=0.78 底面贴桌)且在机械臂可达域内。 -->
+    <model name="green_cube">
+      <static>false</static>
+      <pose>0.17 0.15 0.78 0 0 0</pose>
+      <link name="cube_link">
+        <gravity>true</gravity>
+        <inertial>
+          <mass>0.05</mass>
+          <pose>0 0 0 0 0 0</pose>
+          <inertia>
+            <ixx>0.0000133</ixx>
+            <iyy>0.0000133</iyy>
+            <izz>0.0000133</izz>
+            <ixy>0.0</ixy>
+            <ixz>0.0</ixz>
+            <iyz>0.0</iyz>
+          </inertia>
+        </inertial>
+        <collision name="cube_collision">
+          <geometry>
+            <box><size>0.04 0.04 0.04</size></box>
+          </geometry>
+          <surface>
+            <friction><ode><mu>0.8</mu><mu2>0.8</mu2></ode></friction>
+            <contact><ode><kp>1000000.0</kp><kd>1.0</kd></ode></contact>
+          </surface>
+        </collision>
+        <visual name="cube_visual">
+          <geometry>
+            <box><size>0.04 0.04 0.04</size></box>
+          </geometry>
+          <material>
+            <ambient>0 1 0 1</ambient>
+            <diffuse>0 1 0 1</diffuse>
+            <specular>0.2 0.2 0.2 1</specular>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Green</name>
+            </script>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- 蓝色方块：沿 -y 偏移 0.10m。 -->
+    <model name="blue_cube">
+      <static>false</static>
+      <pose>0.24 0.05 0.78 0 0 0</pose>
+      <link name="cube_link">
+        <gravity>true</gravity>
+        <inertial>
+          <mass>0.05</mass>
+          <pose>0 0 0 0 0 0</pose>
+          <inertia>
+            <ixx>0.0000133</ixx>
+            <iyy>0.0000133</iyy>
+            <izz>0.0000133</izz>
+            <ixy>0.0</ixy>
+            <ixz>0.0</ixz>
+            <iyz>0.0</iyz>
+          </inertia>
+        </inertial>
+        <collision name="cube_collision">
+          <geometry>
+            <box><size>0.04 0.04 0.04</size></box>
+          </geometry>
+          <surface>
+            <friction><ode><mu>0.8</mu><mu2>0.8</mu2></ode></friction>
+            <contact><ode><kp>1000000.0</kp><kd>1.0</kd></ode></contact>
+          </surface>
+        </collision>
+        <visual name="cube_visual">
+          <geometry>
+            <box><size>0.04 0.04 0.04</size></box>
+          </geometry>
+          <material>
+            <ambient>0 0 1 1</ambient>
+            <diffuse>0 0 1 1</diffuse>
+            <specular>0.2 0.2 0.2 1</specular>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Blue</name>
+            </script>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <include>
+      <uri>file:///home/user/.ignition/fuel/fuel.gazebosim.org/openrobotics/models/dining table/1</uri>
+      <name>DiningTable</name>
+      <pose>0.170236 0.246007 0 0 -0 0</pose>
+    </include>
+    <light name='sun' type='directional'>
+      <pose>0 0 10 0 -0 0</pose>
+      <cast_shadows>true</cast_shadows>
+      <intensity>1</intensity>
+      <direction>-0.5 0.1 -0.9</direction>
+      <diffuse>0.8 0.8 0.8 1</diffuse>
+      <specular>0.2 0.2 0.2 1</specular>
+      <attenuation>
+        <range>1000</range>
+        <linear>0.01</linear>
+        <constant>0.90000000000000002</constant>
+        <quadratic>0.001</quadratic>
+      </attenuation>
+      <spot>
+        <inner_angle>0</inner_angle>
+        <outer_angle>0</outer_angle>
+        <falloff>0</falloff>
+      </spot>
+    </light>
+  </world>
+</sdf>

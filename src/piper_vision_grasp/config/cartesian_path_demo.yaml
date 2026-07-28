@@ -1,0 +1,30 @@
+cartesian_path_demo:
+  ros__parameters:
+    use_sim_time: true
+    group_name: piper_arm
+    base_link: arm_base
+    end_effector: link6
+    planning_time: 5.0
+
+    # 可按课程实验要求修改；先到达统一起点再规划 Cartesian Path。
+    move_to_start: true
+    start_joints: [0.0, 0.419, -0.733, 0.0, 1.152, 0.0]
+
+    frame_id: arm_base
+    max_step: 0.005
+    jump_threshold: 0.0
+    prismatic_jump_threshold: 0.0
+    revolute_jump_threshold: 0.0
+    avoid_collisions: true
+    min_fraction: 0.95
+    service_timeout_sec: 10.0
+    motion_timeout_sec: 30.0
+
+    # 每连续 3 个数为相对当前 link6 位姿的 [dx, dy, dz]（米）。
+    # 节点运行时读取当前位姿并保持姿态不变：先沿 +x 走两段连续直线，
+    # 再沿 +z 形成折线。可按课程要求调整偏移量。
+    relative_waypoints: [
+      0.050, 0.000, 0.000,
+      0.100, 0.000, 0.000,
+      0.100, 0.000, 0.100
+    ]

@@ -1,0 +1,57 @@
+<launch>
+    <set_parameter name="use_sim_time" value="true" />
+    <!-- <set_env name="LIBGL_ALWAYS_SOFTWARE" value="1" /> -->
+    <set_env name="GZ_SIM_RESOURCE_PATH"
+        value="$(find-pkg-share piper_description)/.." />
+    <set_env name="IGN_GAZEBO_RESOURCE_PATH"
+        value="$(find-pkg-share piper_description)/.." />
+
+    <let name="urdf_path"
+        value="$(find-pkg-share piper_description)/urdf/piper_with_camera.xacro" />
+
+    <node pkg="robot_state_publisher" exec="robot_state_publisher">
+        <param name="use_sim_time" value="true" />
+        <param name="robot_description"
+            value="$(command 'xacro $(var urdf_path)')" />
+    </node>
+
+    <include file="$(find-pkg-share ros_gz_sim)/launch/gz_sim.launch.py">
+        <arg name="gz_args" value="$(find-pkg-share piper_bringup)/world/world.sdf -r" />
+        <arg name="gz_version" value="6" />
+    </include>
+
+    <node pkg="ros_gz_sim" exec="create"
+        args="-world empty -name piper -topic robot_description
+              -x 0.17 -y -0.25 -z 0.75                                                                                               
+              -R 0 -P 0 -Y 1.57" />
+
+    <node pkg="ros_gz_bridge" exec="parameter_bridge" >
+        <param name="config_file" value="$(find-pkg-share piper_bringup)/config/gazebo_bridge.yaml" />
+    </node>
+
+    <node pkg="controller_manager" exec="spawner"
+        args="joint_state_broadcaster --controller-manager /controller_manager --controller-manager-timeout 60" />
+    <node pkg="controller_manager" exec="spawner"
+        args="piper_arm_controller --controller-manager /controller_manager --controller-manager-timeout 60" />
+    <node pkg="controller_manager" exec="spawner"
+        args="piper_gripper_controller --controller-manager /controller_manager --controller-manager-timeout 60" />
+
+  <node pkg="controller_manager" exec="spawner"
+      args="piper_gripper8_controller --controller-manager /controller_manager --controller-manager-timeout 60" />
+
+
+    <node pkg="piper_gazebo" exec="joint8_ctrl.py" output="screen">
+        <param name="use_sim_time" value="true"/>
+    </node>
+
+    <!-- <node pkg="piper_bringup" exec="set_gz_gain.py" name="gz_gain_setter" output="screen">
+        <param name="use_sim_time" value="true"/>
+    </node> -->
+
+    <!-- <include file="$(find-pkg-share piper_with_gripper_moveit)/launch/piper_moveit.launch.py" /> -->
+    <include file="$(find-pkg-share piper_camera_moveit_config)/launch/move_group.launch.py" />
+
+    <include file="$(find-pkg-share piper_camera_moveit_config)/launch/moveit_rviz.launch.py" />
+
+
+</launch>

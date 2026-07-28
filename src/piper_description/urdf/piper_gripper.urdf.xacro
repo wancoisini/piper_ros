@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<robot
+  name="piper"
+  xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <!-- <xacro:include filename="$(find piper_description)/urdf/piper_gripper_base.xacro"/> -->
+  <xacro:include filename="$(find piper_description)/urdf/piper_description_v100_realsense_camera_v2.urdf.xacro"/>
+  <xacro:include filename="$(find piper_description)/urdf/piper_gripper.ros2_controller.xacro"/>
+  <xacro:include filename="$(find piper_description)/urdf/piper_gripper_gazebo.xacro" />
+  <xacro:include filename="$(find piper_description)/urdf/piper_camera_gazebo.xacro" />
+
+
+
+
+  <!-- <joint name="camera_stand_joint" type="fixed">
+    <origin rpy="-1.57 0.0 0.0" xyz="-0.001 0.032 0.022"/>
+    <parent link="link6"/>
+    <child link="camera_stand_link"/>
+    <axis xyz="0.0 0.0 0.0"/>
+    <limit effort="0.0" lower="0.0" upper="0.0" velocity="0.0"/>
+  </joint>
+  <joint name="d435_camera_joint" type="fixed">
+    <origin rpy="0.0 -1.22 -1.57" xyz="-0.029 0.065 0.022"/>
+    <parent link="link6"/>
+    <child link="d435_camera_link"/>
+    <axis xyz="0.0 0.0 0.0"/>
+    <limit effort="0.0" lower="0.0" upper="0.0" velocity="0.0"/>
+  </joint> -->
+
+</robot>

@@ -21,5 +21,6 @@
 
   <export>
     <build_type>ament_cmake</build_type>
+    <gazebo_media_path>share/${PACKAGE_NAME}</gazebo_media_path>
   </export>
 </package>

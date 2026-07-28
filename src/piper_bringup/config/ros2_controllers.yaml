@@ -1,0 +1,58 @@
+
+# This config file is used by ros2_control
+controller_manager:
+  ros__parameters:
+    update_rate: 100  # Hz
+
+    piper_arm_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+
+
+    piper_gripper_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+
+
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+
+    piper_gripper8_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+
+gz_ros2_control:
+  ros__parameters:
+    position_proportional_gain: 0.2
+
+piper_arm_controller:
+  ros__parameters:
+    joints:
+      - joint1
+      - joint2
+      - joint3
+      - joint4
+      - joint5
+      - joint6
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position
+      - velocity
+piper_gripper_controller:
+  ros__parameters:
+    joints:
+      - joint7
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position
+      - velocity
+
+piper_gripper8_controller:
+  ros__parameters:
+    joints:
+      - joint8
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position
+      - velocity
